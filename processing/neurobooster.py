@@ -44,10 +44,23 @@ def copy_map_file(subject, out_dir, map_file):
 
 
 def ped_to_bed(prefix, plink='utils/plink'):
-    os.system(f'chmod 777 {plink}')
+    subprocess.run(['chmod', '777', plink])
     cmd = f'{plink} --file {prefix} --make-bed --out {prefix}'
     print(cmd)
-    os.system(cmd)
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+    for stdout_line in iter(process.stdout.readline, ""):
+        print(stdout_line, end="")  # Print each line of stdout in real time
+
+    for stderr_line in iter(process.stderr.readline, ""):
+        print(stderr_line, end="")  # Print each line of stderr in real time
+
+    process.stdout.close()
+    process.stderr.close()
+    return_code = process.wait()
+
+    if return_code:
+        raise subprocess.CalledProcessError(return_code, cmd)
 
 
 class NeuroBoosterManifest():
