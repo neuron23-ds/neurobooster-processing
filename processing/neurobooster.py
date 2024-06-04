@@ -74,10 +74,10 @@ class NeuroBoosterManifest():
 
         self.idat_dir = os.path.join(raw_data_root, manifest, f'LibraryData_{self.manifest}_{self.chip_id}')
 
-    def process_to_plink(self, out_dir='mounted/lrrk2-clinical-trials/genotype/plink/individual'):
+    def process_to_plink(self, out_dir='mounted/lrrk2-clinical-trials/genotype/plink/individual', plink='utils/plink_linux_x86_64_20231211/plink'):
         print(f'Processing manifest {self.manifest} to plink')
         convert_idat_to_plink(self.idat_dir, out_dir)
         for subject in self.subjects:
             copy_map_file(subject, out_dir=out_dir, map_file=f'{out_dir}/NeuroBooster_20042459_A2.map')
             subject_prefix = os.path.join(out_dir, subject)
-            ped_to_bed(subject_prefix, plink='utils/plink_linux_x86_64_20231211/plink')
+            ped_to_bed(subject_prefix, plink=plink)
